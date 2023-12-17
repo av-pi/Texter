@@ -10,7 +10,36 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.texter.ui.ChatListScreen
+import com.example.texter.ui.LoginScreen
+import com.example.texter.ui.ProfileScreen
+import com.example.texter.ui.SignupScreen
+import com.example.texter.ui.SingleChatScreen
+import com.example.texter.ui.SingleStatusScreen
+import com.example.texter.ui.StatusListScreen
 import com.example.texter.ui.theme.TexterTheme
+
+/**
+ * Sealed class holding routes for each screen in the app.
+ * Adds consistency and prevents errors in the navigation code.
+ */
+sealed class DestinationScreen(val route: String) {
+    object Signup: DestinationScreen("signup")
+    object Login: DestinationScreen("login")
+    object Profile: DestinationScreen("profile")
+    object ChatList: DestinationScreen("chat_list")
+    object SingleChat: DestinationScreen("single_chat/{chatId}") {
+        fun createRoute(id: String) = "single_chat/$id"
+    }
+    object StatusList: DestinationScreen("status_list")
+    object SingleStatus: DestinationScreen("single_status/{statusId}") {
+        fun createRoute(id: String) = "single_status/$id"
+    }
+
+}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +51,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    TexterNavigation()
                 }
             }
         }
@@ -30,17 +59,38 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun TexterNavigation() {
+    val navController = rememberNavController()
+    
+    NavHost(navController = navController, startDestination = DestinationScreen.Signup.route) {
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TexterTheme {
-        Greeting("Android")
+        composable(route = DestinationScreen.Signup.route) {
+            SignupScreen()
+        }
+
+        composable(route = DestinationScreen.Login.route) {
+            LoginScreen()
+        }
+
+        composable(route = DestinationScreen.Profile.route) {
+            ProfileScreen()
+        }
+
+        composable(route = DestinationScreen.StatusList.route) {
+            StatusListScreen()
+        }
+
+        composable(route = DestinationScreen.SingleStatus.route) {
+            SingleStatusScreen(statusId = "123")
+        }
+
+        composable(route = DestinationScreen.ChatList.route) {
+            ChatListScreen()
+        }
+
+        composable(route = DestinationScreen.SingleChat.route) {
+            SingleChatScreen(chatId = "123")
+        }
+
     }
 }
