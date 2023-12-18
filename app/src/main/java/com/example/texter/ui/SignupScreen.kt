@@ -27,6 +27,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.texter.CheckSignedIn
 import com.example.texter.DestinationScreen
 import com.example.texter.R
 import com.example.texter.TexterProgressSpinner
@@ -37,6 +38,9 @@ import com.example.texter.navigateTo
 fun SignupScreen(
     navController: NavController, viewModel: TexterViewModel
 ) {
+    
+    CheckSignedIn(viewModel = viewModel, navController = navController)
+    
     Box(modifier = Modifier.fillMaxSize()) {
 
         Column(

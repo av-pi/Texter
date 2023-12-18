@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -64,6 +66,25 @@ fun NotificationErrorMessage(viewModel: TexterViewModel) {
 
     if (!notificationMessage.isNullOrEmpty()) {
         Toast.makeText(LocalContext.current, notificationMessage, Toast.LENGTH_SHORT).show()
+    }
+}
+
+/**
+ * Function to check if a user is currently signed in with Firebase
+ */
+@Composable
+fun CheckSignedIn(
+    viewModel: TexterViewModel,
+    navController: NavController
+) {
+    val alreadySignedIn = remember { mutableStateOf(false) }
+    val signedIn = viewModel.signedIn.value
+
+    if (signedIn && !alreadySignedIn.value) {
+        alreadySignedIn.value = true
+        navController.navigate(DestinationScreen.Profile.route) {
+            popUpTo(0)
+        }
     }
 }
 
