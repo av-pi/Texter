@@ -27,7 +27,7 @@ class TexterViewModel @Inject constructor(
     val userData = mutableStateOf<UserData?>(null)
 
     init {
-        auth.signOut()
+        //onLogout()
         val currentUser = auth.currentUser
         signedIn.value = currentUser != null
         currentUser?.uid?.let { uid->
@@ -92,6 +92,48 @@ class TexterViewModel @Inject constructor(
     }
 
     /**
+     * Function to process logging in with Firebase
+     *
+     * @param email The email entered to login
+     * @param password The password entered to login
+     */
+    fun onLogin(email: String, password: String) {
+        if (email.isEmpty() or password.isEmpty()) {
+            handleException(customMessage = "Please fill all fields")
+            return
+        }
+
+        inProgress.value = true
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    signedIn.value = true
+                    inProgress.value = false
+                    auth.currentUser?.uid?.let { uid->
+                        getUserData(uid = uid)
+                    }
+                } else {
+                    handleException(task.exception, "Login failed")
+                }
+            }
+            .addOnFailureListener {
+                handleException(it, "Login failed")
+            }
+    }
+
+    /**
+     * Function to handle logout functionality.
+     * Resets all relevant states in the viewmodel
+     */
+    fun onLogout() {
+        auth.signOut()
+        signedIn.value = false
+        userData.value = null
+        popupNotification.value = Event("Successfully logged out")
+
+    }
+
+    /**
      * Creates a new user or updates existing
      * user in the Firebase database
      */
@@ -101,7 +143,13 @@ class TexterViewModel @Inject constructor(
         imageUrl: String? = null
     ) {
         val uid = auth.currentUser?.uid
-        val userData = UserData(uid, name, number, imageUrl)
+        val userData = UserData(
+            userId = uid,
+            // We don't want to reset userData state if no arguments passed with function call
+            name = name ?: userData.value?.name,
+            number = number ?: userData.value?.number,
+            imageUrl = imageUrl ?: userData.value?.imageUrl
+        )
 
         uid?.let { uid ->
             inProgress.value = true
