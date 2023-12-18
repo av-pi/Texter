@@ -64,6 +64,8 @@ class MainActivity : ComponentActivity() {
 fun TexterNavigation() {
     val navController = rememberNavController()
     val viewModel = hiltViewModel<TexterViewModel>()
+    
+    NotificationErrorMessage(viewModel = viewModel)
 
     NavHost(navController = navController, startDestination = DestinationScreen.Signup.route) {
 
