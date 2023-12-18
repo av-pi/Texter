@@ -6,10 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -62,7 +60,7 @@ class MainActivity : ComponentActivity() {
 fun TexterNavigation() {
     val navController = rememberNavController()
     
-    NavHost(navController = navController, startDestination = DestinationScreen.Signup.route) {
+    NavHost(navController = navController, startDestination = DestinationScreen.Profile.route) {
 
         composable(route = DestinationScreen.Signup.route) {
             SignupScreen()
@@ -73,11 +71,11 @@ fun TexterNavigation() {
         }
 
         composable(route = DestinationScreen.Profile.route) {
-            ProfileScreen()
+            ProfileScreen(navController = navController)
         }
 
         composable(route = DestinationScreen.StatusList.route) {
-            StatusListScreen()
+            StatusListScreen(navController = navController)
         }
 
         composable(route = DestinationScreen.SingleStatus.route) {
@@ -85,7 +83,7 @@ fun TexterNavigation() {
         }
 
         composable(route = DestinationScreen.ChatList.route) {
-            ChatListScreen()
+            ChatListScreen(navController = navController)
         }
 
         composable(route = DestinationScreen.SingleChat.route) {
