@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -26,15 +27,16 @@ import dagger.hilt.android.AndroidEntryPoint
  * Adds consistency and prevents errors in the navigation code.
  */
 sealed class DestinationScreen(val route: String) {
-    object Signup: DestinationScreen("signup")
-    object Login: DestinationScreen("login")
-    object Profile: DestinationScreen("profile")
-    object ChatList: DestinationScreen("chat_list")
-    object SingleChat: DestinationScreen("single_chat/{chatId}") {
+    object Signup : DestinationScreen("signup")
+    object Login : DestinationScreen("login")
+    object Profile : DestinationScreen("profile")
+    object ChatList : DestinationScreen("chat_list")
+    object SingleChat : DestinationScreen("single_chat/{chatId}") {
         fun createRoute(id: String) = "single_chat/$id"
     }
-    object StatusList: DestinationScreen("status_list")
-    object SingleStatus: DestinationScreen("single_status/{statusId}") {
+
+    object StatusList : DestinationScreen("status_list")
+    object SingleStatus : DestinationScreen("single_status/{statusId}") {
         fun createRoute(id: String) = "single_status/$id"
     }
 
@@ -61,11 +63,12 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TexterNavigation() {
     val navController = rememberNavController()
-    
-    NavHost(navController = navController, startDestination = DestinationScreen.Profile.route) {
+    val viewModel = hiltViewModel<TexterViewModel>()
+
+    NavHost(navController = navController, startDestination = DestinationScreen.Signup.route) {
 
         composable(route = DestinationScreen.Signup.route) {
-            SignupScreen()
+            SignupScreen(navController = navController, viewModel = viewModel)
         }
 
         composable(route = DestinationScreen.Login.route) {

@@ -1,5 +1,6 @@
 package com.example.texter
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -13,4 +14,6 @@ class TexterViewModel @Inject constructor(
     val db: FirebaseFirestore,
     val storage: FirebaseStorage
 ): ViewModel() {
+
+    val inProgress = mutableStateOf(false)
 }
