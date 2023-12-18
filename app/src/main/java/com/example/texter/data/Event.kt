@@ -11,7 +11,7 @@ open class Event<out T>(
         return if (hasBeenHandled) {
             null
         } else {
-            hasBeenHandled = false
+            hasBeenHandled = true
             this.content
         }
     }

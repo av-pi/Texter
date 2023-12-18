@@ -101,7 +101,12 @@ fun SignupScreen(
             Button(
                 onClick = {
                     focus.clearFocus(force = true)
-                    // TODO: Call viewmodel
+                    viewModel.onSignup(
+                        nameState.value.text,
+                        numberState.value.text,
+                        emailState.value.text,
+                        passwordState.value.text
+                    )
                 },
                 modifier = Modifier.padding(8.dp)
             ) {
