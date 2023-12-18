@@ -19,6 +19,7 @@ import com.example.texter.ui.SingleChatScreen
 import com.example.texter.ui.SingleStatusScreen
 import com.example.texter.ui.StatusListScreen
 import com.example.texter.ui.theme.TexterTheme
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * Sealed class holding routes for each screen in the app.
@@ -39,6 +40,7 @@ sealed class DestinationScreen(val route: String) {
 
 }
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
