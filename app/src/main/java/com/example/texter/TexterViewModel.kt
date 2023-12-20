@@ -1,5 +1,6 @@
 package com.example.texter
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -12,6 +13,7 @@ import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.lang.Exception
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,7 +32,7 @@ class TexterViewModel @Inject constructor(
         //onLogout()
         val currentUser = auth.currentUser
         signedIn.value = currentUser != null
-        currentUser?.uid?.let { uid->
+        currentUser?.uid?.let { uid ->
             getUserData(uid = uid)
         }
     }
@@ -38,6 +40,8 @@ class TexterViewModel @Inject constructor(
     /**
      * Listens to the document of user with uid and
      * retrieves the user's stored data if logged in
+     *
+     * @param uid The uid of the user
      */
     private fun getUserData(uid: String) {
         inProgress.value = true
@@ -109,7 +113,7 @@ class TexterViewModel @Inject constructor(
                 if (task.isSuccessful) {
                     signedIn.value = true
                     inProgress.value = false
-                    auth.currentUser?.uid?.let { uid->
+                    auth.currentUser?.uid?.let { uid ->
                         getUserData(uid = uid)
                     }
                 } else {
@@ -143,7 +147,7 @@ class TexterViewModel @Inject constructor(
         imageUrl: String? = null
     ) {
         val uid = auth.currentUser?.uid
-        val userData = UserData(
+        val user = UserData(
             userId = uid,
             // We don't want to reset userData state if no arguments passed with function call
             name = name ?: userData.value?.name,
@@ -157,7 +161,7 @@ class TexterViewModel @Inject constructor(
                 .addOnSuccessListener {
                     if (it.exists()) {
                         // Update user
-                        it.reference.update(userData.toMap())
+                        it.reference.update(user.toMap())
                             .addOnSuccessListener {
                                 inProgress.value = false
                             }
@@ -166,7 +170,7 @@ class TexterViewModel @Inject constructor(
                             }
                     } else {
                         // Create user
-                        db.collection(COLLECTION_USER).document(uid).set(userData)
+                        db.collection(COLLECTION_USER).document(uid).set(user)
                         inProgress.value = false
                         getUserData(uid)
                     }
@@ -178,7 +182,17 @@ class TexterViewModel @Inject constructor(
     }
 
     /**
-     * Centralised function to handle any kind of exception gracefully
+     * Updates the user's name and number
+     *
+     * @param name The updated name
+     * @param number The updated number
+     */
+    fun updateProfile(name: String, number: String) {
+        createOrUpdateProfile(name = name, number = number)
+    }
+
+    /**
+     * Centralised function to handle any kind of exception or error gracefully
      *
      * @param exception A specific exception thrown. Could be null
      * @param customMessage A descriptive message to be shown to the user
@@ -194,4 +208,47 @@ class TexterViewModel @Inject constructor(
         inProgress.value = false
 
     }
+
+    /**
+     * Function to upload a picture to Firebase Storage
+     *
+     * @param uri The uri of the picture to be uploaded
+     * @param onSuccess A function to handle successful upload
+     */
+    private fun uploadPicture(
+        uri: Uri,
+        onSuccess: (Uri) -> Unit
+    ) {
+
+        inProgress.value = true
+
+        val storageRef = storage.reference
+        val uuid = UUID.randomUUID()
+        val imageRef = storageRef.child("image/$uuid")
+        val uploadTask = imageRef.putFile(uri)
+
+        uploadTask.addOnSuccessListener {
+            val result = it.metadata?.reference?.downloadUrl
+            result?.addOnSuccessListener(onSuccess)
+            inProgress.value = false
+        }
+        uploadTask.addOnFailureListener {
+            handleException(it)
+        }
+    }
+
+    /**
+     * Function to upload a profile picture to Firebase Storage
+     *
+     * @param uri The uri of the picture to be uploaded
+     */
+    fun uploadProfilePicture(uri: Uri) {
+        uploadPicture(uri) {
+            createOrUpdateProfile(
+                imageUrl = it.toString()
+            )
+        }
+    }
+
 }
+
