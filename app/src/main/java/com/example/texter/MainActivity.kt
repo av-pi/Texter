@@ -78,7 +78,7 @@ fun TexterNavigation() {
         }
 
         composable(route = DestinationScreen.Profile.route) {
-            ProfileScreen(navController = navController)
+            ProfileScreen(navController = navController, viewModel = viewModel)
         }
 
         composable(route = DestinationScreen.StatusList.route) {
