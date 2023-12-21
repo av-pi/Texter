@@ -90,7 +90,7 @@ fun TexterNavigation() {
         }
 
         composable(route = DestinationScreen.ChatList.route) {
-            ChatListScreen(navController = navController)
+            ChatListScreen(navController = navController, viewModel = viewModel)
         }
 
         composable(route = DestinationScreen.SingleChat.route) {

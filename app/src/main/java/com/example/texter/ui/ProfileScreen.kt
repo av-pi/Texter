@@ -219,7 +219,5 @@ fun ProfilePicture(
         val isLoading = viewModel.inProgress.value
 
         if (isLoading) TexterProgressSpinner()
-
-
     }
 }

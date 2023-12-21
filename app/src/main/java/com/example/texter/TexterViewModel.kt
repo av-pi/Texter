@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.texter.data.COLLECTION_USER
+import com.example.texter.data.ChatData
 import com.example.texter.data.Event
 import com.example.texter.data.UserData
 import com.google.firebase.auth.FirebaseAuth
@@ -27,6 +28,10 @@ class TexterViewModel @Inject constructor(
     val popupNotification = mutableStateOf<Event<String>?>(null)
     val signedIn = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
+
+    // Dummy chats data
+    val chats = mutableStateOf<List<ChatData>>(listOf())
+    val inProgressChats = mutableStateOf(false)
 
     init {
         //onLogout()
