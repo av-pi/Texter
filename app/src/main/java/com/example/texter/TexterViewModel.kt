@@ -3,14 +3,19 @@ package com.example.texter
 import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
+import com.example.texter.data.COLLECTION_CHAT
 import com.example.texter.data.COLLECTION_USER
 import com.example.texter.data.ChatData
+import com.example.texter.data.ChatUser
 import com.example.texter.data.Event
 import com.example.texter.data.UserData
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
+import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.lang.Exception
@@ -252,6 +257,64 @@ class TexterViewModel @Inject constructor(
             createOrUpdateProfile(
                 imageUrl = it.toString()
             )
+        }
+    }
+
+    fun onAddChat(number: String) {
+        if (number.isEmpty() or !number.isDigitsOnly()) {
+            handleException(customMessage = "Please enter a valid number")
+        } else {
+            // Query database to check if chat already exists
+            db.collection(COLLECTION_CHAT)
+                .where(
+                    Filter.or(
+                        Filter.and(
+                            Filter.equalTo("userOne.number", number),
+                            Filter.equalTo("userTwo.number", userData.value?.number)
+                        ),
+                        Filter.and(
+                            Filter.equalTo("userOne.number", userData.value?.number),
+                            Filter.equalTo("userTwo.number", number)
+                        )
+                    )
+                ).get()
+                .addOnSuccessListener {
+                    if (it.isEmpty) {
+                        // Chat does not exist, create new chat
+                        db.collection(COLLECTION_USER).whereEqualTo("number", number)
+                            .get()
+                            .addOnSuccessListener {
+                                if (it.isEmpty) {
+                                    handleException(customMessage = "User not found")
+                                } else {
+                                    val chatPartner = it.toObjects<UserData>()[0]
+                                    val id = db.collection(COLLECTION_CHAT).document().id
+                                    val chat = ChatData(
+                                        chatId = id,
+                                        userOne = ChatUser(
+                                            userId = userData.value?.userId,
+                                            name = userData.value?.name,
+                                            number = userData.value?.number,
+                                            imageUrl = userData.value?.imageUrl
+                                        ),
+                                        userTwo = ChatUser(
+                                            userId = chatPartner.userId,
+                                            name = chatPartner.name,
+                                            number = chatPartner.number,
+                                            imageUrl = chatPartner.imageUrl
+                                        )
+                                    )
+                                    db.collection(COLLECTION_CHAT).document(id).set(chat)
+                                }
+                            }
+                            .addOnFailureListener {
+                                 handleException(it)
+                            }
+                    } else {
+                        handleException(customMessage = "Chat already exists")
+                    }
+                }
+
         }
     }
 

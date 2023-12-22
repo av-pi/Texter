@@ -45,7 +45,7 @@ fun ChatListScreen(
         val onFabClick: () -> Unit = { showDialog.value = true }
         val onDismiss: () -> Unit = { showDialog.value = false }
         val onAddChat: (String) -> Unit = {
-            // TODO: Call view model to add chat
+            viewModel.onAddChat(it)
             showDialog.value = false
         }
 
