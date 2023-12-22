@@ -9,11 +9,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.texter.ui.ChatListScreen
 import com.example.texter.ui.LoginScreen
 import com.example.texter.ui.ProfileScreen
@@ -105,12 +103,8 @@ fun TexterNavigation() {
         /**
          * Renders the SingleStatusScreen.
          */
-        composable(
-            route = DestinationScreen.SingleStatus.route,
-            arguments = listOf(navArgument("chatId") { type = NavType.StringType })
-        ) {
-            val id = navController.currentBackStackEntry?.arguments?.getString("chatId") ?: "-1"
-            SingleStatusScreen(statusId = id)
+        composable(route = DestinationScreen.SingleStatus.route) {
+            SingleStatusScreen(statusId = "123")
         }
 
         /**
@@ -124,8 +118,10 @@ fun TexterNavigation() {
          * Renders the SingleChatScreen.
          */
         composable(route = DestinationScreen.SingleChat.route) {
-            SingleChatScreen(chatId = "123")
+            val chatId = it.arguments?.getString("chatId")
+            chatId?.let { id ->
+                SingleChatScreen(navController = navController, viewModel = viewModel, chatId = id)
+            }
         }
-
     }
 }
