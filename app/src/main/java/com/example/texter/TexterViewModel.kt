@@ -6,10 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import com.example.texter.data.COLLECTION_CHAT
+import com.example.texter.data.COLLECTION_MESSAGES
 import com.example.texter.data.COLLECTION_USER
 import com.example.texter.data.ChatData
 import com.example.texter.data.ChatUser
 import com.example.texter.data.Event
+import com.example.texter.data.Message
 import com.example.texter.data.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Filter
@@ -19,6 +21,7 @@ import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.lang.Exception
+import java.util.Calendar
 import java.util.UUID
 import javax.inject.Inject
 
@@ -29,17 +32,20 @@ class TexterViewModel @Inject constructor(
     val storage: FirebaseStorage
 ) : ViewModel() {
 
+    // Authentication states
     val inProgress = mutableStateOf(false)
     val popupNotification = mutableStateOf<Event<String>?>(null)
     val signedIn = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
 
-    // Dummy chats data
+    // Chats states
     val chats = mutableStateOf<List<ChatData>>(listOf())
     val inProgressChats = mutableStateOf(false)
+    val chatMessages = mutableStateOf<List<Message>>(listOf())
+    val inProgressChatMessages = mutableStateOf(false)
+
 
     init {
-        //onLogout()
         val currentUser = auth.currentUser
         signedIn.value = currentUser != null
         currentUser?.uid?.let { uid ->
@@ -62,6 +68,7 @@ class TexterViewModel @Inject constructor(
                     val user = value.toObject<UserData>()
                     userData.value = user
                     inProgress.value = false
+                    populateChats()
                 }
             }
     }
@@ -143,6 +150,7 @@ class TexterViewModel @Inject constructor(
         auth.signOut()
         signedIn.value = false
         userData.value = null
+        chats.value = listOf()
         popupNotification.value = Event("Successfully logged out")
 
     }
@@ -260,8 +268,13 @@ class TexterViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Adds a new chat with the given number.
+     *
+     * @param number The number of the user to add to the chat.
+     */
     fun onAddChat(number: String) {
-        if (number.isEmpty() or !number.isDigitsOnly()) {
+        if (number.isEmpty() || !number.isDigitsOnly()) {
             handleException(customMessage = "Please enter a valid number")
         } else {
             // Query database to check if chat already exists
@@ -278,16 +291,16 @@ class TexterViewModel @Inject constructor(
                         )
                     )
                 ).get()
-                .addOnSuccessListener {
-                    if (it.isEmpty) {
+                .addOnSuccessListener { result ->
+                    if (result.isEmpty) {
                         // Chat does not exist, create new chat
                         db.collection(COLLECTION_USER).whereEqualTo("number", number)
                             .get()
-                            .addOnSuccessListener {
-                                if (it.isEmpty) {
+                            .addOnSuccessListener { snapshot ->
+                                if (snapshot.isEmpty) {
                                     handleException(customMessage = "User not found")
                                 } else {
-                                    val chatPartner = it.toObjects<UserData>()[0]
+                                    val chatPartner = snapshot.toObjects<UserData>()[0]
                                     val id = db.collection(COLLECTION_CHAT).document().id
                                     val chat = ChatData(
                                         chatId = id,
@@ -308,15 +321,56 @@ class TexterViewModel @Inject constructor(
                                 }
                             }
                             .addOnFailureListener {
-                                 handleException(it)
+                                handleException(it)
                             }
                     } else {
                         handleException(customMessage = "Chat already exists")
                     }
                 }
-
         }
     }
 
+    /**
+     * Retrieves all chats of the logged in user
+     */
+    private fun populateChats() {
+        inProgressChats.value = true
+
+        db.collection(COLLECTION_CHAT).where(
+            Filter.or(
+                Filter.equalTo("userOne.userId", userData.value?.userId),
+                Filter.equalTo("userTwo.userId", userData.value?.userId)
+            )
+        )
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    handleException(error)
+                }
+                if (value != null) {
+                    chats.value = value.documents.mapNotNull { it.toObject<ChatData>() }
+                }
+                inProgressChats.value = false
+            }
+    }
+
+    fun onSendMessage(chatId: String, message: String) {
+        val time = Calendar.getInstance().time.toString()
+        val msg = Message(
+            sentBy = userData.value?.userId,
+            message = message,
+            timestamp = time
+        )
+        if (message.isEmpty()) {
+            handleException(customMessage = "Please enter a message")
+        } else {
+
+            // Each chat document in the chat collection has a message collections
+            db.collection(COLLECTION_CHAT)
+                .document(chatId)
+                .collection(COLLECTION_MESSAGES)
+                .document()
+                .set(msg)
+        }
+    }
 }
 

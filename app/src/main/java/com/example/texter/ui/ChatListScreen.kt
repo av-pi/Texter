@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -26,8 +28,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.texter.DestinationScreen
+import com.example.texter.TexterListItem
 import com.example.texter.TexterProgressSpinner
 import com.example.texter.TexterViewModel
+import com.example.texter.navigateTo
 
 @Composable
 fun ChatListScreen(
@@ -75,7 +80,27 @@ fun ChatListScreen(
                             Text(text = "No chats available")
                         }
                     } else {
-                        // TODO: Fill with chats lazy column
+                        LazyColumn(modifier = Modifier.weight(1f)) {
+                            items(chats) { chat ->
+                                // Check which chat participant is not the logged in user
+                                val chatPartner =
+                                    if (viewModel.userData.value?.userId == chat.userOne.userId) chat.userTwo
+                                    else chat.userOne
+
+                                TexterListItem(
+                                    imageUrl = chatPartner.imageUrl ?: "",
+                                    name = chatPartner.name
+                                ) {
+                                    chat.chatId?.let { id ->
+                                        navigateTo(
+                                            navController,
+                                            DestinationScreen.SingleChat.createRoute(id)
+                                        )
+                                    }
+                                }
+                            }
+
+                        }
                     }
                     BottomNavigationMenu(
                         selectedItem = BottomNavigationItem.CHATLIST,

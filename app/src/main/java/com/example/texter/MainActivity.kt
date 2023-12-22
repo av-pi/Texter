@@ -9,9 +9,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.texter.ui.ChatListScreen
 import com.example.texter.ui.LoginScreen
 import com.example.texter.ui.ProfileScreen
@@ -64,35 +66,63 @@ class MainActivity : ComponentActivity() {
 fun TexterNavigation() {
     val navController = rememberNavController()
     val viewModel = hiltViewModel<TexterViewModel>()
-    
+
+    /**
+     * Displays an error message if the user is not authenticated and tries to access a restricted screen.
+     */
     NotificationErrorMessage(viewModel = viewModel)
 
     NavHost(navController = navController, startDestination = DestinationScreen.Signup.route) {
 
+        /**
+         * Renders the SignupScreen.
+         */
         composable(route = DestinationScreen.Signup.route) {
             SignupScreen(navController = navController, viewModel = viewModel)
         }
 
+        /**
+         * Renders the LoginScreen.
+         */
         composable(route = DestinationScreen.Login.route) {
             LoginScreen(viewModel, navController)
         }
 
+        /**
+         * Renders the ProfileScreen.
+         */
         composable(route = DestinationScreen.Profile.route) {
             ProfileScreen(navController = navController, viewModel = viewModel)
         }
 
+        /**
+         * Renders the StatusListScreen.
+         */
         composable(route = DestinationScreen.StatusList.route) {
             StatusListScreen(navController = navController)
         }
 
-        composable(route = DestinationScreen.SingleStatus.route) {
-            SingleStatusScreen(statusId = "123")
+        /**
+         * Renders the SingleStatusScreen.
+         */
+        composable(
+            route = DestinationScreen.SingleStatus.route,
+            arguments = listOf(navArgument("chatId") { type = NavType.StringType })
+        ) {
+            val id = navController.currentBackStackEntry?.arguments?.getString("chatId") ?: "-1"
+            SingleStatusScreen(statusId = id)
         }
 
+        /**
+         * Renders the ChatListScreen.
+         */
         composable(route = DestinationScreen.ChatList.route) {
             ChatListScreen(navController = navController, viewModel = viewModel)
         }
 
+        /**
+         * Renders the SingleChatScreen.
+         */
         composable(route = DestinationScreen.SingleChat.route) {
             SingleChatScreen(chatId = "123")
         }
