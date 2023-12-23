@@ -7,11 +7,13 @@ import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import com.example.texter.data.COLLECTION_CHAT
 import com.example.texter.data.COLLECTION_MESSAGES
+import com.example.texter.data.COLLECTION_STATUS
 import com.example.texter.data.COLLECTION_USER
 import com.example.texter.data.ChatData
 import com.example.texter.data.ChatUser
 import com.example.texter.data.Event
 import com.example.texter.data.Message
+import com.example.texter.data.Status
 import com.example.texter.data.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Filter
@@ -46,6 +48,9 @@ class TexterViewModel @Inject constructor(
     val inProgressChatMessages = mutableStateOf(false)
     var currentChatMessagesListener: ListenerRegistration? = null
 
+    // Status states
+    val status = mutableStateOf<List<Status>>(listOf())
+    val inProgressStatus = mutableStateOf(false)
 
     init {
         val currentUser = auth.currentUser
@@ -70,6 +75,7 @@ class TexterViewModel @Inject constructor(
                     userData.value = user
                     inProgress.value = false
                     populateChatsList()
+                    populateStatuses()
                 }
             }
     }
@@ -418,5 +424,81 @@ class TexterViewModel @Inject constructor(
         chatMessages.value = listOf()
         currentChatMessagesListener = null
     }
+
+    /**
+     * Creates a new status with the given image URL.
+     *
+     * @param imageUrl The URL of the image to be set as the status image.
+     */
+    private fun createStatus(imageUrl: String) {
+        val newStatus = Status(
+            user = ChatUser(
+                userId = userData.value?.userId,
+                name = userData.value?.name,
+                number = userData.value?.number,
+                imageUrl = userData.value?.imageUrl
+            ),
+            imageUrl = imageUrl,
+            timestamp = System.currentTimeMillis()
+        )
+
+        // Add status to the Firebase db
+        db.collection(COLLECTION_STATUS).document().set(newStatus)
+    }
+
+    fun uploadStatus(imageUri: Uri) {
+        uploadPicture(imageUri) {
+            createStatus(it.toString())
+        }
+    }
+
+    /**
+     * Retrieves all statuses of all users chatting with logged in user
+     *
+     */
+    private fun populateStatuses() {
+        inProgressStatus.value = true
+
+        // Compute the 24 hour time cutoff for displaying status updates
+        val millisTimeDelta = 24L * 60 * 60 * 1000
+        val cutoff = Calendar.getInstance().timeInMillis - millisTimeDelta
+
+        // Retrieve the users that have a chat with the user
+        db.collection(COLLECTION_CHAT)
+            .where(
+                Filter.or(
+                    Filter.equalTo("userOne.userId", userData.value?.userId),
+                    Filter.equalTo("userTwo.userId", userData.value?.userId)
+                )
+            )
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    handleException(error)
+                }
+                if (value != null) {
+                    // Want to display our own status updates as well
+                    val currentConnections = arrayListOf(userData.value?.userId)
+                    currentConnections.addAll(value.toObjects<ChatData>().map { chat ->
+                        if (chat.userOne.userId == userData.value?.userId) chat.userTwo.userId
+                        else chat.userOne.userId
+                    })
+
+                    db.collection(COLLECTION_STATUS)
+                        .whereGreaterThan("timestamp", cutoff)
+                        .whereIn("user.userId", currentConnections)
+                        .addSnapshotListener { value1, error1 ->
+                            if (error1 != null) {
+                                handleException(error1)
+                            }
+                            if (value1 != null) {
+                                status.value = value1.toObjects()
+                            }
+                            inProgressStatus.value = false
+                        }
+                }
+            }
+        inProgressStatus.value = false
+    }
 }
+
 

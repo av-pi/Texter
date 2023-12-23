@@ -97,7 +97,7 @@ fun TexterNavigation() {
          * Renders the StatusListScreen.
          */
         composable(route = DestinationScreen.StatusList.route) {
-            StatusListScreen(navController = navController)
+            StatusListScreen(navController = navController, viewModel = viewModel)
         }
 
         /**
