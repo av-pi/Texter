@@ -32,6 +32,7 @@ import com.example.texter.DestinationScreen
 import com.example.texter.TexterListItem
 import com.example.texter.TexterProgressSpinner
 import com.example.texter.TexterViewModel
+import com.example.texter.TitleText
 import com.example.texter.navigateTo
 
 @Composable
@@ -69,6 +70,9 @@ fun ChatListScreen(
                         .fillMaxSize()
                         .padding(it),
                 ) {
+
+                    TitleText(title = "Chats")
+
                     if (chats.isEmpty()) {
                         Column(
                             modifier = Modifier
