@@ -16,6 +16,7 @@ import com.example.texter.data.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
@@ -43,6 +44,7 @@ class TexterViewModel @Inject constructor(
     val inProgressChats = mutableStateOf(false)
     val chatMessages = mutableStateOf<List<Message>>(listOf())
     val inProgressChatMessages = mutableStateOf(false)
+    var currentChatMessagesListener: ListenerRegistration? = null
 
 
     init {
@@ -54,10 +56,9 @@ class TexterViewModel @Inject constructor(
     }
 
     /**
-     * Listens to the document of user with uid and
-     * retrieves the user's stored data if logged in
+     * Retrieves the user's data stored in Firebase
      *
-     * @param uid The uid of the user
+     * @param uid The user ID
      */
     private fun getUserData(uid: String) {
         inProgress.value = true
@@ -68,14 +69,18 @@ class TexterViewModel @Inject constructor(
                     val user = value.toObject<UserData>()
                     userData.value = user
                     inProgress.value = false
-                    populateChats()
+                    populateChatsList()
                 }
             }
     }
 
     /**
-     * Handles all possible paths of success and
-     * failure after user has entered their details
+     * Signs the user into Firebase
+     *
+     * @param number The user's number
+     * @param password The user's password
+     * @param name The user's name
+     * @param email The user's email
      */
     fun onSignup(name: String, number: String, email: String, password: String) {
         if (name.isEmpty() or number.isEmpty() or email.isEmpty() or password.isEmpty()) {
@@ -113,7 +118,7 @@ class TexterViewModel @Inject constructor(
     }
 
     /**
-     * Function to process logging in with Firebase
+     * Logs the user into the application
      *
      * @param email The email entered to login
      * @param password The password entered to login
@@ -143,8 +148,7 @@ class TexterViewModel @Inject constructor(
     }
 
     /**
-     * Function to handle logout functionality.
-     * Resets all relevant states in the viewmodel
+     * Logs the user out of the application
      */
     fun onLogout() {
         auth.signOut()
@@ -156,8 +160,11 @@ class TexterViewModel @Inject constructor(
     }
 
     /**
-     * Creates a new user or updates existing
-     * user in the Firebase database
+     * Creates a new user or updates existing user
+     *
+     * @param name User's name
+     * @param number User's number
+     * @param imageUrl URL of user's image
      */
     private fun createOrUpdateProfile(
         name: String? = null,
@@ -173,9 +180,9 @@ class TexterViewModel @Inject constructor(
             imageUrl = imageUrl ?: userData.value?.imageUrl
         )
 
-        uid?.let { uid ->
+        uid?.let { userId ->
             inProgress.value = true
-            db.collection(COLLECTION_USER).document(uid).get()
+            db.collection(COLLECTION_USER).document(userId).get()
                 .addOnSuccessListener {
                     if (it.exists()) {
                         // Update user
@@ -188,9 +195,9 @@ class TexterViewModel @Inject constructor(
                             }
                     } else {
                         // Create user
-                        db.collection(COLLECTION_USER).document(uid).set(user)
+                        db.collection(COLLECTION_USER).document(userId).set(user)
                         inProgress.value = false
-                        getUserData(uid)
+                        getUserData(userId)
                     }
                 }
                 .addOnFailureListener {
@@ -333,7 +340,7 @@ class TexterViewModel @Inject constructor(
     /**
      * Retrieves all chats of the logged in user
      */
-    private fun populateChats() {
+    private fun populateChatsList() {
         inProgressChats.value = true
 
         db.collection(COLLECTION_CHAT).where(
@@ -353,6 +360,12 @@ class TexterViewModel @Inject constructor(
             }
     }
 
+    /**
+     * Adds a new message to the chat with the given ID.
+     *
+     * @param chatId The ID of the chat to add the message to.
+     * @param message The message to be sent.
+     */
     fun onSendMessage(chatId: String, message: String) {
         val time = Calendar.getInstance().time.toString()
         val msg = Message(
@@ -364,13 +377,46 @@ class TexterViewModel @Inject constructor(
             handleException(customMessage = "Please enter a message")
         } else {
 
-            // Each chat document in the chat collection has a message collections
+            // Each chat document in the chat collection has a messages collection
             db.collection(COLLECTION_CHAT)
                 .document(chatId)
                 .collection(COLLECTION_MESSAGES)
                 .document()
                 .set(msg)
         }
+    }
+
+    /**
+     * Retrieves all messages of a specific chat
+     *
+     * @param chatId The id of the chat to retrieve messages from
+     */
+    fun populateChatMessages(chatId: String) {
+        inProgressChatMessages.value = true
+
+        currentChatMessagesListener = db
+            .collection(COLLECTION_CHAT)
+            .document(chatId)
+            .collection(COLLECTION_MESSAGES)
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    handleException(error)
+                }
+                if (value != null) {
+                    chatMessages.value = value.documents
+                        .mapNotNull { it.toObject<Message>() }
+                        .sortedBy { it.timestamp }
+                }
+                inProgressChatMessages.value = false
+            }
+    }
+
+    /**
+     * Cleans up the listener for the chat messages collection
+     */
+    fun depopulateChatMessages() {
+        chatMessages.value = listOf()
+        currentChatMessagesListener = null
     }
 }
 
