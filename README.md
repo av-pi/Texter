@@ -23,7 +23,7 @@ Texter is an Android messaging app that offers a seamless way to communicate and
 
 1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/your-username/Texter.git](https://github.com/av-pi/Texter.git): [https://github.com/av-pi/Texter.git](https://github.com/av-pi/Texter.git)
+   git clone [https://github.com/av-pi/Texter.git](https://github.com/av-pi/Texter.git): [https://github.com/av-pi/Texter.git](https://github.com/av-pi/Texter.git)
    
 2. **Open the project in Android Studio.**
 3. **Connect a physical device or set up an emulator.**
