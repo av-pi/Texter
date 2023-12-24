@@ -29,8 +29,6 @@ Texter is an Android messaging app that offers a seamless way to communicate and
 3. **Connect a physical device or set up an emulator.**
 4. **Run the app.**
 
-**(Standard installation steps for Android Studio projects will be followed, including building the APK and deploying it to the device or emulator.)**
-
 ## Tech Stack
 
 - **Android Studio:** Development environment
