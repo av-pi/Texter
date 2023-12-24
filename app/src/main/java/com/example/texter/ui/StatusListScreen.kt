@@ -93,7 +93,7 @@ fun StatusListScreen(
                             ) {
                                 navigateTo(
                                     navController,
-                                    DestinationScreen.SingleStatus.createRoute("")
+                                    DestinationScreen.SingleStatus.createRoute(myStatuses[0].user.userId)
                                 )
                             }
 
@@ -108,7 +108,7 @@ fun StatusListScreen(
                                 TexterListItem(imageUrl = user.imageUrl, name = user.name) {
                                     navigateTo(
                                         navController,
-                                        DestinationScreen.SingleStatus.createRoute("")
+                                        DestinationScreen.SingleStatus.createRoute(user.userId )
                                     )
                                 }
                             }

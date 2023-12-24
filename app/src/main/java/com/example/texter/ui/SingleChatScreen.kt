@@ -36,7 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.texter.TexterDivider
-import com.example.texter.TexterProfileImage
+import com.example.texter.TexterImage
 import com.example.texter.TexterViewModel
 import com.example.texter.data.Message
 
@@ -146,7 +146,7 @@ fun ChatHeader(
                 .clickable { onBackClick.invoke() }
         )
 
-        TexterProfileImage(
+        TexterImage(
             data = imageUrl,
             modifier = Modifier
                 .padding(8.dp)

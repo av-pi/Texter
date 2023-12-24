@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.texter.DestinationScreen
 import com.example.texter.TexterDivider
-import com.example.texter.TexterProfileImage
+import com.example.texter.TexterImage
 import com.example.texter.TexterProgressSpinner
 import com.example.texter.TexterViewModel
 import com.example.texter.navigateTo
@@ -209,7 +209,7 @@ fun ProfilePicture(
                     .padding(8.dp)
                     .size(100.dp)
             ) {
-                TexterProfileImage(data = imageUrl)
+                TexterImage(data = imageUrl)
             }
 
             Text(text = "Change profile picture")

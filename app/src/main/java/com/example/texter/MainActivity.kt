@@ -36,8 +36,8 @@ sealed class DestinationScreen(val route: String) {
     }
 
     object StatusList : DestinationScreen("status_list")
-    object SingleStatus : DestinationScreen("single_status/{statusId}") {
-        fun createRoute(id: String) = "single_status/$id"
+    object SingleStatus : DestinationScreen("single_status/{userId}") {
+        fun createRoute(userId: String?) = "single_status/$userId"
     }
 
 }
@@ -104,7 +104,10 @@ fun TexterNavigation() {
          * Renders the SingleStatusScreen.
          */
         composable(route = DestinationScreen.SingleStatus.route) {
-            SingleStatusScreen(statusId = "123")
+            val userId = it.arguments?.getString("userId")
+            userId?.let {
+                SingleStatusScreen(userId = it, navController = navController, viewModel = viewModel)
+            }
         }
 
         /**

@@ -120,7 +120,7 @@ fun TexterDivider() {
 
 
 @Composable
-fun TexterProfileImage(
+fun TexterImage(
     data: String?,
     modifier: Modifier = Modifier.wrapContentSize(),
     contentScale: ContentScale = ContentScale.Crop
@@ -154,7 +154,7 @@ fun TexterListItem(
             .clickable { onItemClick.invoke() },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        TexterProfileImage(
+        TexterImage(
             data = imageUrl,
             modifier = Modifier
                 .padding(8.dp)
