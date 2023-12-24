@@ -102,6 +102,13 @@ fun TexterProgressIndicator(
     )
 }
 
+/**
+ * Enum class representing the states of a progress indicator.
+ *
+ * @property INITIAL The initial state of the progress indicator, where the progress is set to 0.
+ * @property ACTIVE The active state of the progress indicator, where the progress is animated between 0 and 1.
+ * @property COMPLETE The complete state of the progress indicator, where the progress is set to 1.
+ */
 enum class ProgressIndicatorState {
     INITIAL,
     ACTIVE,

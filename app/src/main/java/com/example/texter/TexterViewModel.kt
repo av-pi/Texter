@@ -454,7 +454,6 @@ class TexterViewModel @Inject constructor(
 
     /**
      * Retrieves all statuses of all users chatting with logged in user
-     *
      */
     private fun populateStatuses() {
         inProgressStatus.value = true
