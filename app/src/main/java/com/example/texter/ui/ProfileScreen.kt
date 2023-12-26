@@ -3,6 +3,7 @@ package com.example.texter.ui
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,7 +18,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -28,7 +32,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -55,7 +58,9 @@ fun ProfileScreen(
         val scrollState = rememberScrollState()
         val focus = LocalFocusManager.current
 
-        Column {
+        Column(
+            modifier = Modifier.background(MaterialTheme.colorScheme.background)
+        ) {
 
             ProfileContent(
                 modifier = Modifier
@@ -113,8 +118,16 @@ fun ProfileContent(
                 .padding(8.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Back", modifier = Modifier.clickable { onBack.invoke() })
-            Text(text = "Save", modifier = Modifier.clickable { onSave.invoke() })
+            Text(
+                text = "Back",
+                modifier = Modifier.clickable { onBack.invoke() },
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+            Text(
+                text = "Save",
+                modifier = Modifier.clickable { onSave.invoke() },
+                color = MaterialTheme.colorScheme.onPrimary
+            )
 
         }
 
@@ -130,15 +143,20 @@ fun ProfileContent(
                 .padding(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Name", modifier = Modifier.width(100.dp))
+            Text(
+                text = "Name",
+                modifier = Modifier.width(100.dp),
+                color = MaterialTheme.colorScheme.onPrimary
+            )
             TextField(
                 value = name,
                 onValueChange = { onNameChange(it) },
                 colors = TextFieldDefaults.colors(
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent
+                    focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                    focusedContainerColor = MaterialTheme.colorScheme.primary,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.primary,
+                    cursorColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         }
@@ -154,10 +172,11 @@ fun ProfileContent(
                 value = number,
                 onValueChange = { onNumberChange(it) },
                 colors = TextFieldDefaults.colors(
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent
+                    focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                    focusedContainerColor = MaterialTheme.colorScheme.primary,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.primary,
+                    cursorColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         }
@@ -170,7 +189,16 @@ fun ProfileContent(
                 .padding(16.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            Text(text = "Logout", modifier = Modifier.clickable { onLogout.invoke() })
+            Button(
+                onClick = { onLogout.invoke() },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                )
+            ) {
+                Text(text = "Logout", color = MaterialTheme.colorScheme.onPrimary)
+            }
+
         }
 
     }
@@ -212,7 +240,7 @@ fun ProfilePicture(
                 TexterImage(data = imageUrl)
             }
 
-            Text(text = "Change profile picture")
+            Text(text = "Change profile picture", color = MaterialTheme.colorScheme.onPrimary)
 
 
         }

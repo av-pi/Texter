@@ -2,30 +2,13 @@ package com.example.texter.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-//val Purple80 = Color(0xFFD0BCFF)
-//val PurpleGrey80 = Color(0xFFCCC2DC)
-//val Pink80 = Color(0xFFEFB8C8)
-//
-//val Purple40 = Color(0xFF6650a4)
-//val PurpleGrey40 = Color(0xFF625b71)
-//val Pink40 = Color(0xFF7D5260)
-
-// Dark theme
-val InkyDepths = Color(0xFF1E3A8A) // Deep Navy Blue
-val MoonlightGlimmer = Color(0xFFF8F9F9) // Very Light Gray
-val PaleSeafoam = Color(0xFFD3F2EF) // Pale Seafoam
-val DarkNavyGray = Color(0xFF2C333A) // Dark Navy Gray
-val DarkBlueGray = Color(0xFF242A35) // Dark Blue Gray
-val BioluminescentTeal = Color(0xFF50B776) // Teal Green
-val DeepYellowGlow = Color(0xFFFCE0AD) // Deep Yellow
-
-// Light theme
-val SeaGlassGreen = Color(0xFFC2E5CE)
-val Charcoal = Color(0xFF212529)
-val LightOliveGreen = Color(0xFFE2EFD1)
-val LightBlueGray = Color(0xFFF3F5F2)
-val VeryLightLilac = Color(0xFFFCE0FF)
-
-// Helper colors
-val MutedGreen = Color(0xFFABDA9E)
-val ErrorRed = Color(0xFFD00036)
+val paleGray = Color(0xFFFAFAFA)
+val lighterGray = Color(0xFFF5F5F5)
+val softLavender = Color(0xFFEAE6FF)
+val evenLighterGray = Color(0xFFF0F0F0)
+val white = Color(0xFFFFFFFF)
+val black = Color(0xFF000000)
+val darkGray = Color(0xFF424242)
+val darkerGray = Color(0xFF212121)
+val charcoal = Color(0xFF1C1C1C)
+val softBlue = Color(0xFF90C3DF)

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -110,7 +111,7 @@ fun CheckSignedIn(
 @Composable
 fun TexterDivider() {
     Divider(
-        color = Color.LightGray,
+        color = MaterialTheme.colorScheme.tertiary,
         thickness = 1.dp,
         modifier = Modifier
             .alpha(0.3f)
@@ -151,7 +152,8 @@ fun TexterListItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(75.dp)
-            .clickable { onItemClick.invoke() },
+            .clickable { onItemClick.invoke() }
+            .background(MaterialTheme.colorScheme.background),
         verticalAlignment = Alignment.CenterVertically
     ) {
         TexterImage(
@@ -162,14 +164,17 @@ fun TexterListItem(
                 .clip(
                     CircleShape
                 )
-                .background(Color.Red)
+                .background(MaterialTheme.colorScheme.tertiary)
         )
         Text(
             text = name ?: "---",
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(start = 4.dp)
+            modifier = Modifier.padding(start = 4.dp),
+            color = MaterialTheme.colorScheme.onPrimary
         )
     }
+
+    TexterDivider()
 }
 
 @Composable

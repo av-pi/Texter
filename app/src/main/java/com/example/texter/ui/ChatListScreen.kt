@@ -1,5 +1,6 @@
 package com.example.texter.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +25,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -68,7 +68,8 @@ fun ChatListScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(it),
+                        .padding(it)
+                        .background(MaterialTheme.colorScheme.background),
                 ) {
 
                     TitleText(title = "Chats")
@@ -81,7 +82,7 @@ fun ChatListScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
-                            Text(text = "No chats available")
+                            Text(text = "No chats available", color = MaterialTheme.colorScheme.onPrimary)
                         }
                     } else {
                         LazyColumn(modifier = Modifier.weight(1f)) {
@@ -156,6 +157,6 @@ fun FAB(
         shape = CircleShape,
         modifier = Modifier.padding(bottom = 40.dp)
     ) {
-        Icon(imageVector = Icons.Rounded.Add, contentDescription = null, tint = Color.White)
+        Icon(imageVector = Icons.Rounded.Add, contentDescription = null, tint = MaterialTheme.colorScheme.onSecondary)
     }
 }

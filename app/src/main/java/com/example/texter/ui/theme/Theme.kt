@@ -10,34 +10,33 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = InkyDepths,
-    onPrimary = MoonlightGlimmer,
-    secondary = PaleSeafoam,
-    onSecondary = InkyDepths,
-    surface = DarkNavyGray,
-    background = DarkBlueGray,
-    onBackground = MoonlightGlimmer, // Ensure readability on dark backgrounds
-    tertiary = BioluminescentTeal,
+    primary = darkGray,
+    secondary = softBlue,
+    background = charcoal,
+    surface = darkerGray,
+    onPrimary = white,
+    onSecondary = darkerGray,
+    onBackground = darkGray,
+    onSurface = paleGray
+
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = SeaGlassGreen,
-    onPrimary = Charcoal,
-    secondary = MoonlightGlimmer,
-    onSecondary = SeaGlassGreen,
-    surface = LightOliveGreen,
-    background = LightBlueGray,
-    onBackground = Charcoal,
-    error = ErrorRed,
-    onError = Color.White,
-    tertiary = VeryLightLilac,
+    primary = paleGray,
+    secondary = softLavender,
+    background = evenLighterGray,
+    surface = white,
+    onPrimary = black,
+    onSecondary = darkGray,
+    onBackground = darkerGray,
+    onSurface = charcoal
+
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),

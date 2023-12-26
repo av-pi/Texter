@@ -20,8 +20,10 @@ import androidx.compose.material.icons.outlined.Send
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,7 +33,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -93,7 +94,9 @@ fun SingleChatScreen(
      * A column that fills the entire screen and contains the chat header and messages.
      */
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         /**
          * A function that is called when the back button is clicked. It pops the back stack and depopulates the chat messages.
@@ -135,7 +138,8 @@ fun ChatHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight(),
+            .wrapContentHeight()
+            .background(MaterialTheme.colorScheme.primary),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -143,7 +147,8 @@ fun ChatHeader(
             contentDescription = null,
             modifier = Modifier
                 .padding(8.dp)
-                .clickable { onBackClick.invoke() }
+                .clickable { onBackClick.invoke() },
+            tint = MaterialTheme.colorScheme.onPrimary
         )
 
         TexterImage(
@@ -158,7 +163,8 @@ fun ChatHeader(
             text = name,
             modifier = Modifier
                 .padding(start = 4.dp),
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onPrimary
         )
     }
 }
@@ -174,8 +180,11 @@ fun Messages(
             val alignment = if (msg.sentBy == currentUserId) Alignment.End
             else Alignment.Start
 
-            val colour = if (msg.sentBy == currentUserId) Color(0xFF68C400)
-            else Color(0xFFC0C0C0)
+            val colourContainer = if (msg.sentBy == currentUserId) MaterialTheme.colorScheme.primary
+            else MaterialTheme.colorScheme.secondary
+
+            val colourText = if (msg.sentBy == currentUserId) MaterialTheme.colorScheme.onPrimary
+            else MaterialTheme.colorScheme.onSecondary
 
             Column(
                 modifier = Modifier
@@ -187,9 +196,9 @@ fun Messages(
                     text = msg.message ?: "",
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
-                        .background(colour)
+                        .background(colourContainer)
                         .padding(12.dp),
-                    color = Color.White,
+                    color = colourText,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -213,6 +222,7 @@ fun ReplyBox(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.primary)
     ) {
         TexterDivider()
 
@@ -223,15 +233,38 @@ fun ReplyBox(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TextField(
+
+            OutlinedTextField(
                 value = reply,
                 onValueChange = onReplyChange,
                 maxLines = 3,
-                modifier = Modifier.weight(4f)
+                modifier = Modifier.weight(4f),
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                    cursorColor = MaterialTheme.colorScheme.onPrimary,
+                    focusedContainerColor = MaterialTheme.colorScheme.primary,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.primary
+                )
+
             )
 
+//            TextField(
+//                value = reply,
+//                onValueChange = onReplyChange,
+//                maxLines = 3,
+//                modifier = Modifier.weight(4f),
+//                colors = TextFieldDefaults.colors(
+//                    focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+//                    unfocusedTextColor = MaterialTheme.colorScheme.onPrimary,
+//                    focusedContainerColor = MaterialTheme.colorScheme.primary,
+//                    unfocusedContainerColor = MaterialTheme.colorScheme.primary,
+//                    cursorColor = MaterialTheme.colorScheme.onPrimary
+//                )
+//            )
+
             IconButton(onClick = onSendReply, modifier = Modifier.weight(1f)) {
-                Icon(imageVector = Icons.Outlined.Send, contentDescription = "Button to send reply")
+                Icon(imageVector = Icons.Outlined.Send, contentDescription = "Button to send reply", tint = MaterialTheme.colorScheme.onPrimary)
             }
         }
     }
