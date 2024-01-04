@@ -50,3 +50,20 @@ Texter is an Android messaging app that offers a seamless way to communicate and
 3. **Start conversations:** Initiate text chats with your contacts within a comfortable and familiar conversation space.
 4. **Set status images:** Share photos or videos as your status, leveraging the customizable appearance options of Material Design 3.
 5. **View status updates:** See the status images of your contacts, presented in a visually appealing and organized manner.
+
+## Screenshots
+
+### Signup page
+[![Texter-Signup-Screen.png](https://i.postimg.cc/3x42mcxk/Texter-Signup-Screen.png)](https://postimg.cc/Yv74w8g7)
+
+### Login page
+[![Texter-Login-Screen.png](https://i.postimg.cc/02Hp6sPg/Texter-Login-Screen.png)](https://postimg.cc/2VhqJg1T)
+
+### Chat screen
+[![Texter-Chat-Screen.png](https://i.postimg.cc/PxPPmG29/Texter-Chat-Screen.png)](https://postimg.cc/cgGxSzqB)
+
+### Profile page
+[![Texter-Profile-Screen.png](https://i.postimg.cc/ZnNnM8kL/Texter-Profile-Screen.png)](https://postimg.cc/CnFwZfxZ)
+
+### Status
+[![Texter-Status-Screen.png](https://i.postimg.cc/cLhRhSBL/Texter-Status-Screen.png)](https://postimg.cc/cvKt1Pzp)
